@@ -1,9 +1,8 @@
 export type Question = {
   question: string
   answers: Answer[]
-  correctAnswer: string
 }
-type Answer = {
+export type Answer = {
   answer: string
   isGood: boolean
 }
