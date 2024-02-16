@@ -2,7 +2,15 @@ import { DB_QUIZZ } from "@/constants"
 import { db } from "@/constants/db"
 import type { Question, Quizz } from "@/types"
 import { getItemFromLocalStorage } from "@/utils/storage"
-import { addDoc, collection, doc, setDoc } from "firebase/firestore"
+import {
+  addDoc,
+  collection,
+  doc,
+  getDocs,
+  query,
+  setDoc,
+  where
+} from "firebase/firestore"
 import React from "react"
 import { useForm } from "react-hook-form"
 
@@ -18,6 +26,16 @@ const CreateQuizz = (props: Props) => {
         questions: [],
         title: data.title
       }
+      const myQuizzes = await getDocs(
+        query(
+          collection(db, DB_QUIZZ),
+          where("ownerid", "==", id),
+          where("title", "==", data.title)
+        )
+      )
+      if (myQuizzes.docs.length > 0)
+        throw new Error("Un Quizz du meme nom existe déjà")
+
       await addDoc(collection(db, DB_QUIZZ), newQuizz)
       reset()
     } catch (error) {
