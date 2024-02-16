@@ -1,0 +1,23 @@
+{
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.esbenp.prettier-vscode": "explicit",
+    "source.fixAll.eslint": "explicit"
+  },
+
+  "javascript.format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces": false,
+  "typescript.format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces": false,
+  "typescript.preferences.preferTypeOnlyAutoImports": true,
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": true,
+  "explorer.fileNesting.patterns": {
+    "*.ts": "$(capture).*.ts,$(capture).*.tsx,$(capture).*.js",
+    "*.js": "$(capture).*.ts,$(capture).*.tsx,$(capture).*.js",
+    "*.jsx": "$(capture).*.ts,$(capture).*.tsx,$(capture).*.js",
+    "*.tsx": "$(capture).*.ts,$(capture).*.tsx,$(capture).*.js",
+    "index.tsx": "${dirname}.module.css,${dirname}.module.scss"
+  }
+}
