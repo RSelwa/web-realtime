@@ -14,10 +14,24 @@ export type Quizz = {
 }
 export type FirebaseDocumentWithId<T> = T & { id: string }
 
-export type Room = {}
+export type Room = {
+  name: string
+  members: UsersRoom[]
+  messages: Message[]
+  quizzId: string
+}
 export type UsersRoom = {
   email: string
   pseudo: string
   id: string
   pts: number
+  isLeader: boolean
+}
+
+type Message = {
+  id: string
+  text: string
+  createdAt: number
+  createdBy: string
+  roomId: string
 }

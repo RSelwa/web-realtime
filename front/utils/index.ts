@@ -6,6 +6,7 @@ import { doc, getDoc, onSnapshot } from "firebase/firestore"
 import { DB_USERS } from "@/constants"
 import { auth, db } from "@/constants/db"
 import { getItemFromLocalStorage } from "@/utils/storage"
+import type { Room } from "@/types"
 
 type AuthState = {
   pending: boolean
@@ -58,4 +59,10 @@ export const useFirebaseAuth = () => {
   }, [authState.pending, authState.user?.uid])
 
   return { auth, ...authState }
+}
+
+export const isLeader = (members: Room["members"]) => {
+  const { id } = getItemFromLocalStorage("user", { id: "" })
+  const member = members.find((member) => member.id === id)
+  return member?.isLeader
 }

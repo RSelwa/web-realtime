@@ -1,4 +1,4 @@
-export const firestoreAutoId = (): string => {
+const firestoreAutoId = (): string => {
   const CHARS =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 

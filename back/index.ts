@@ -48,8 +48,11 @@ io.on("connection", async (socket: any) => {
         members: [user],
         name: `${user.pseudo}'s room`,
         messages: [],
+        quizz: {} as Quizz,
       };
-      await firestore.collection("rooms").add(newRoom);
+      const roomCreated = await firestore.collection("rooms").add(newRoom);
+
+      socket.emit("redirect-user-room", roomCreated.id);
     });
 
     socket.on("join-room", async (roomName: string) => {
@@ -57,6 +60,17 @@ io.on("connection", async (socket: any) => {
 
       socket.join(roomName);
       room = roomName;
+      const doc = firestore.collection("rooms").doc(roomName);
+
+      doc.onSnapshot((docSnapshot: any) =>
+        io.to(docSnapshot.id).emit("update-room", {
+          id: docSnapshot.id,
+          ...docSnapshot.data(),
+        })
+      );
+    });
+    socket.on("select-quizz", async (quizz: Quizz) => {
+      await firestore.collection("rooms").doc(room).set({ quizz: quizz });
     });
     socket.on("leave-room", () => {
       socket.leave(room);
@@ -74,6 +88,7 @@ type Room = {
   name: string;
   members: UsersRoom[];
   messages: Message[];
+  quizz: Quizz;
 };
 
 type UsersRoom = {
@@ -81,6 +96,7 @@ type UsersRoom = {
   pseudo: string;
   id: string;
   pts: number;
+  isLeader: boolean;
 };
 type Message = {
   id: string;
@@ -88,4 +104,19 @@ type Message = {
   createdAt: number;
   createdBy: string;
   roomId: string;
+};
+type FirebaseDocumentWithId<T> = T & { id: string };
+
+type Quizz = {
+  ownerid: string;
+  title: string;
+  questions: Question[];
+};
+type Question = {
+  question: string;
+  answers: Answer[];
+};
+type Answer = {
+  answer: string;
+  isGood: boolean;
 };
