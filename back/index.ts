@@ -23,15 +23,6 @@ admin.initializeApp({
 });
 const firestore = admin.firestore();
 
-// const firestoreApp = initializeApp({
-//   apiKey: "AIzaSyC6DFL6L0wHtk5EJz1Du2WoLt91-aQtu00",
-//   authDomain: "web-realtime-fdd51.firebaseapp.com",
-//   projectId: "web-realtime-fdd51",
-//   storageBucket: "web-realtime-fdd51.appspot.com",
-//   messagingSenderId: "1048193492962",
-//   appId: "1:1048193492962:web:5328f468a7b8ca900bbbbb",
-// });
-
 const app = express();
 const port = process.env.PORT;
 
@@ -52,16 +43,20 @@ io.on("connection", async (socket: any) => {
       socket.leave(room);
       room = "";
     });
+    socket.on("create-room", async (user: UsersRoom) => {
+      const newRoom: Room = {
+        members: [user],
+        name: `${user.pseudo}'s room`,
+        messages: [],
+      };
+      await firestore.collection("rooms").add(newRoom);
+    });
+
     socket.on("join-room", async (roomName: string) => {
       console.log("a user joined room", roomName);
 
       socket.join(roomName);
       room = roomName;
-
-      const res = await firestore.collection("rooms").add({
-        name: "Tokyo",
-        country: "Japan",
-      });
     });
     socket.on("leave-room", () => {
       socket.leave(room);
@@ -74,3 +69,23 @@ io.on("connection", async (socket: any) => {
 });
 
 httpServer.listen(port);
+
+type Room = {
+  name: string;
+  members: UsersRoom[];
+  messages: Message[];
+};
+
+type UsersRoom = {
+  email: string;
+  pseudo: string;
+  id: string;
+  pts: number;
+};
+type Message = {
+  id: string;
+  text: string;
+  createdAt: number;
+  createdBy: string;
+  roomId: string;
+};

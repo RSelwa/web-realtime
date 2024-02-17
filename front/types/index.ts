@@ -15,3 +15,9 @@ export type Quizz = {
 export type FirebaseDocumentWithId<T> = T & { id: string }
 
 export type Room = {}
+export type UsersRoom = {
+  email: string
+  pseudo: string
+  id: string
+  pts: number
+}
