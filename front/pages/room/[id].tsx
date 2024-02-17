@@ -8,9 +8,13 @@ const RoomId = (props: Props) => {
   const router = useRouter()
   const { id } = router.query || ""
   useEffect(() => {
+    console.log(id)
+
     socket.emit("join-room", id)
 
-    return () => socket.emit("leave-room", id)
+    return () => {
+      socket.emit("leave-room", id)
+    }
   }, [router.isReady])
 
   return <div>RoomId</div>

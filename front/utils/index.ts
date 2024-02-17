@@ -17,7 +17,7 @@ const defaultAuth: AuthState = {
   user: null,
   isSignedIn: false
 }
-const useFirebaseAuth = () => {
+export const useFirebaseAuth = () => {
   const [authState, setAuthState] = useState<AuthState>(defaultAuth)
   const registerDocSnapshot = useRef<() => void>()
 
@@ -59,5 +59,13 @@ const useFirebaseAuth = () => {
 
   return { auth, ...authState }
 }
+export const firestoreAutoId = (): string => {
+  const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 
-export default useFirebaseAuth
+  let autoId = ""
+
+  for (let i = 0; i < 20; i++) {
+    autoId += CHARS.charAt(Math.floor(Math.random() * CHARS.length))
+  }
+  return autoId
+}

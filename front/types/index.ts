@@ -13,3 +13,5 @@ export type Quizz = {
   questions: Question[]
 }
 export type FirebaseDocumentWithId<T> = T & { id: string }
+
+export type Room = {}
