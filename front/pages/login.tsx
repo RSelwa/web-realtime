@@ -29,9 +29,6 @@ const Login = () => {
         <input type="password" {...register("password")}></input>
       </fieldset>
       <button type="submit">Login</button>
-      <button type="button" onClick={() => signOut(auth)}>
-        Logout
-      </button>
     </form>
   )
 }

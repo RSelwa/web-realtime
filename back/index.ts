@@ -32,7 +32,7 @@ const io = new Server(httpServer, {
     origin: "*",
   },
 });
-
+const rooms: RoomServer[] = [];
 io.on("connection", async (socket: any) => {
   try {
     let room = "";
@@ -51,7 +51,12 @@ io.on("connection", async (socket: any) => {
         quizz: {} as Quizz,
       };
       const roomCreated = await firestore.collection("rooms").add(newRoom);
-
+      const newServerRoom: RoomServer = {
+        id: roomCreated.id,
+        timer: 0,
+        status: "waiting",
+      };
+      rooms.push(newServerRoom);
       socket.emit("redirect-user-room", roomCreated.id);
     });
 
@@ -89,6 +94,11 @@ type Room = {
   members: UsersRoom[];
   messages: Message[];
   quizz: Quizz;
+};
+type RoomServer = {
+  id: string;
+  timer: number;
+  status: "started" | "waiting";
 };
 
 type UsersRoom = {
