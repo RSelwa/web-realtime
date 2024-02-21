@@ -35,13 +35,13 @@ const io = new Server(httpServer, {
 const rooms: RoomServer[] = [];
 io.on("connection", async (socket: any) => {
   try {
-    let room = "";
+    let roomId = "";
     console.log("a user connected");
 
     socket.on("disconnect", () => {
       console.log("user disconnected");
-      socket.leave(room);
-      room = "";
+      socket.leave(roomId);
+      roomId = "";
     });
     socket.on("create-room", async (user: UsersRoom) => {
       const newRoom: Room = {
@@ -49,6 +49,7 @@ io.on("connection", async (socket: any) => {
         name: `${user.pseudo}'s room`,
         messages: [],
         quizz: {} as Quizz,
+        status: "waiting",
       };
       const roomCreated = await firestore.collection("rooms").add(newRoom);
       const newServerRoom: RoomServer = {
@@ -64,7 +65,7 @@ io.on("connection", async (socket: any) => {
       console.log("a user joined room", roomName);
 
       socket.join(roomName);
-      room = roomName;
+      roomId = roomName;
       const doc = firestore.collection("rooms").doc(roomName);
 
       doc.onSnapshot((docSnapshot: any) =>
@@ -75,12 +76,26 @@ io.on("connection", async (socket: any) => {
       );
     });
     socket.on("select-quizz", async (quizz: Quizz) => {
-      await firestore.collection("rooms").doc(room).set({ quizz: quizz });
+      await firestore.collection("rooms").doc(roomId).set({ quizz: quizz });
+    });
+    socket.on("start-quizz", async () => {
+      const room = rooms.find((room) => room.id === roomId);
+      if (!room) return;
+      await firestore
+        .collection("rooms")
+        .doc(roomId)
+        .set({ status: "started" });
+
+      room.timer = 30;
+      setInterval(() => {
+        room.timer -= 1;
+        io.to(roomId).emit("update-timer", room.timer);
+      }, 1000);
     });
     socket.on("leave-room", () => {
-      socket.leave(room);
-      room = "";
-      console.log("a user leaved room", room);
+      socket.leave(roomId);
+      roomId = "";
+      console.log("a user leaved room", roomId);
     });
   } catch (error) {
     console.log(error);
@@ -94,13 +109,14 @@ type Room = {
   members: UsersRoom[];
   messages: Message[];
   quizz: Quizz;
+  status: RoomStatus;
 };
 type RoomServer = {
   id: string;
   timer: number;
-  status: "started" | "waiting";
+  status: RoomStatus;
 };
-
+type RoomStatus = "started" | "waiting";
 type UsersRoom = {
   email: string;
   pseudo: string;

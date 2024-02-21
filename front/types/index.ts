@@ -13,12 +13,13 @@ export type Quizz = {
   questions: Question[]
 }
 export type FirebaseDocumentWithId<T> = T & { id: string }
-
+export type RoomStatus = "started" | "waiting"
 export type Room = {
   name: string
   members: UsersRoom[]
   messages: Message[]
   quizzId: string
+  status: RoomStatus
 }
 export type UsersRoom = {
   email: string
