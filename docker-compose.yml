@@ -10,3 +10,14 @@ services:
     volumes:
       - /home/node_modules
       - ./front:/home/
+
+  back:
+    build:
+      context: ./back
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    volumes:
+      - /home/node_modules
+      - ./back:/home/
+
