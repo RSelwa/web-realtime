@@ -21,6 +21,9 @@ export type Room = {
   quizzId: string
   status: RoomStatus
 }
+export type RoomFirestore = Room & {
+  quizz?: Quizz
+}
 export type UsersRoom = {
   email: string
   pseudo: string

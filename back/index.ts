@@ -61,22 +61,37 @@ io.on("connection", async (socket: any) => {
       socket.emit("redirect-user-room", roomCreated.id);
     });
 
-    socket.on("join-room", async (roomName: string) => {
-      console.log("a user joined room", roomName);
+    socket.on(
+      "join-room",
+      async ({
+        roomName,
+        newUser,
+      }: {
+        roomName: string;
+        newUser: UsersRoom;
+      }) => {
+        if (!roomName) return;
+        console.log("a user joined room", roomName);
 
-      socket.join(roomName);
-      roomId = roomName;
-      const doc = firestore.collection("rooms").doc(roomName);
+        socket.join(roomName);
+        roomId = roomName;
+        await firestore
+          .collection("rooms")
+          .doc(roomId)
+          .update({ members: FieldValue.arrayUnion(newUser) });
 
-      doc.onSnapshot((docSnapshot: any) =>
-        io.to(docSnapshot.id).emit("update-room", {
-          id: docSnapshot.id,
-          ...docSnapshot.data(),
-        })
-      );
-    });
+        const doc = firestore.collection("rooms").doc(roomName);
+
+        doc.onSnapshot((docSnapshot: any) =>
+          io.to(docSnapshot.id).emit("update-room", {
+            id: docSnapshot.id,
+            ...docSnapshot.data(),
+          })
+        );
+      }
+    );
     socket.on("select-quizz", async (quizz: Quizz) => {
-      await firestore.collection("rooms").doc(roomId).set({ quizz: quizz });
+      await firestore.collection("rooms").doc(roomId).update({ quizz: quizz });
     });
     socket.on("start-quizz", async () => {
       const room = rooms.find((room) => room.id === roomId);
@@ -84,7 +99,7 @@ io.on("connection", async (socket: any) => {
       await firestore
         .collection("rooms")
         .doc(roomId)
-        .set({ status: "started" });
+        .update({ status: "started" });
 
       room.timer = 30;
       setInterval(() => {
