@@ -26,18 +26,34 @@ const Room = () => {
   }
 
   return (
-    <div>
-      <form onSubmit={handleSubmit(joinRoom)}>
-        <fieldset>
-          <label htmlFor="pseudo">Pseudo</label>
-          <input required type="text" {...register("pseudo")} />
-        </fieldset>
-        <Link href={`/room/${getValues("pseudo")}`} legacyBehavior>
-          <a>Rejoindre</a>
-        </Link>
-      </form>
-      <div>
-        <button onClick={createRoom}>Créer</button>
+    <div className="relative flex h-screen flex-col items-center justify-center bg-black bg-cover bg-center">
+      <div className="flex flex-col items-center">
+        <form onSubmit={handleSubmit(joinRoom)} className="text-white">
+          <fieldset className="mb-4">
+            <label htmlFor="pseudo" className=" mr-4  text-white">
+              Pseudo :
+            </label>
+            <input
+              required
+              type="text"
+              {...register("pseudo")}
+              className="rounded-md bg-gray-800 p-2 text-white"
+            />
+          </fieldset>
+          <div className="flex">
+            <Link href={`/room/${getValues("pseudo")}`} legacyBehavior>
+              <a className="flex-1 rounded-l-md bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700">
+                Rejoindre
+              </a>
+            </Link>
+            <button
+              onClick={createRoom}
+              className="flex-1 rounded-r-md bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700"
+            >
+              Créer
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   )
