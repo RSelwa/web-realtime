@@ -11,9 +11,6 @@ import { useForm } from "react-hook-form"
 const Room = () => {
   const { id, email } = getItemFromLocalStorage("user", { id: "", email: "" })
   const { register, handleSubmit, getValues } = useForm<{ pseudo: string }>()
-  const joinRoom = (data: { pseudo: string }) => {
-    socket.emit("join-room", data.pseudo)
-  }
   const createRoom = () => {
     const newUser: UsersRoom = {
       pseudo: getValues("pseudo"),
@@ -27,7 +24,7 @@ const Room = () => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit(joinRoom)}>
+      <form>
         <fieldset>
           <label htmlFor="pseudo">Pseudo</label>
           <input required type="text" {...register("pseudo")} />

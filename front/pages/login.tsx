@@ -25,7 +25,7 @@ const Login = () => {
         <input type="email" {...register("email")}></input>
       </fieldset>
       <fieldset>
-        <label htmlFor="email">Email</label>
+        <label htmlFor="email">Password</label>
         <input type="password" {...register("password")}></input>
       </fieldset>
       <button type="submit">Login</button>
